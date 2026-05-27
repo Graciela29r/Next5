@@ -1,12 +1,18 @@
 import { supabase } from '../../../lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
+// 1. Definimos un tipo limpio para el contexto que Next.js entienda perfectamente
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+// --- MÉTODO GET ---
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteContext // Usamos la estructura que el validador de Next espera
 ) {
   try {
-    const id = params.id;
+    const { id } = await context.params; // Extraemos el id desde context.params
 
     const { data, error } = await supabase
       .from('gallery_images')
@@ -26,12 +32,13 @@ export async function GET(
   }
 }
 
+// --- MÉTODO PUT ---
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteContext
 ) {
   try {
-    const id = params.id;
+    const { id } = await context.params;
     const { title, description, image_url } = await req.json();
 
     const { data, error } = await supabase
@@ -57,12 +64,13 @@ export async function PUT(
   }
 }
 
+// --- MÉTODO DELETE ---
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteContext
 ) {
   try {
-    const id = params.id;
+    const { id } = await context.params;
 
     const { error } = await supabase
       .from('gallery_images')
